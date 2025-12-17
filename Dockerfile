@@ -1,11 +1,18 @@
 FROM golang:1 AS build-env
 
+# Install ca-certificates for Go module downloads
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /go/src/github.com/uxbh/ztdns
+# Copy go.mod and go.sum first for better caching
+COPY go.mod go.sum ./
+
+# Install dependencies
+RUN go mod download
+
 # Add source
 COPY . .
 
-# Install dependencies
-RUN go get -d -v ./...
 # Build static binary
 RUN CGO_ENABLED=0 GOOS=linux go install -v ./...
 
