@@ -49,6 +49,26 @@ ping member.domain.zt
 
 If you prefer to run the server with Docker:
 
+#### Pre-built Images
+
+Multi-platform Docker images are automatically built and published for easy use:
+
+* **DockerHub**: `sstreichan/ztdns:latest`
+* **GitHub Container Registry**: `ghcr.io/sstreichan/ztdns:latest`
+
+Supported platforms:
+- linux/amd64
+- linux/arm64
+- linux/arm/v7
+
+```bash
+# Pull from DockerHub
+docker pull sstreichan/ztdns:latest
+
+# Or pull from GHCR
+docker pull ghcr.io/sstreichan/ztdns:latest
+```
+
 #### Docker Requirements
 
 * [Docker](https://docs.docker.com/install/)
