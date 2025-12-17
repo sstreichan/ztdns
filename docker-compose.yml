@@ -1,7 +1,13 @@
 version: '3'
 services:
   ztdns:
+    # Option 1: Build from source
     build: .
+    
+    # Option 2: Use pre-built multi-platform image (uncomment to use)
+    # image: sstreichan/ztdns:latest
+    # Or use: ghcr.io/sstreichan/ztdns:latest
+    
     ports:
      - "5356:53/udp"
     volumes:
