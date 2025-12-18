@@ -10,7 +10,6 @@
 
 # Env example and local .env
 .env
-.env.example
 
 # Test binary, build with `go test -c`
 *.test
