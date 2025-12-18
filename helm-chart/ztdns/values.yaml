@@ -59,5 +59,17 @@ zerotier:
   port: 53
   dbRefresh: 30
   url: "https://my.zerotier.com/api"
+  interface: "zt0"
+  apiToken: ""
+  # networks is a list of objects with domain and networkId
+  # example:
+  # networks:
+  # - domain: example
+  #   networkId: 0123456789abcdef
   networks: []
-  apiToken: token
+
+secrets:
+  # If useSecret is true the api token will be read from a Kubernetes Secret
+  useSecret: false
+  tokenKey: ZEROTIER_TOKEN
+

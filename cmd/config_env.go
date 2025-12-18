@@ -1,6 +1,10 @@
+// Copyright © 2025 sstreichan
+// This file is part of github.com/sstreichan/ztdns.
+
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -10,6 +14,14 @@ import (
 // loadEnvConfig reads configuration from environment variables (ZTDNS_ prefix)
 // and returns values used by the application. Missing required variables return an error.
 func loadEnvConfig() error {
+	// Load .env file if present (values are used only when the same var is not set in the real environment)
+	if err := loadDotEnv(); err != nil {
+		// Non-fatal: if .env missing, continue; other errors report
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("loading .env: %w", err)
+		}
+	}
+
 	// Required
 	if os.Getenv("ZTDNS_ZT_API") == "" {
 		return fmt.Errorf("missing required env ZTDNS_ZT_API")
@@ -51,6 +63,37 @@ func loadEnvConfig() error {
 		os.Setenv(key, nid)
 	}
 
+	return nil
+}
+
+// loadDotEnv loads a .env file at repo root and sets variables only when they are not already present in the environment.
+func loadDotEnv() error {
+	f, err := os.Open(".env")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		line := strings.TrimSpace(s.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			// skip malformed lines
+			continue
+		}
+		key := strings.TrimSpace(parts[0])
+		val := strings.Trim(strings.TrimSpace(parts[1]), "\"')")
+		if os.Getenv(key) == "" {
+			os.Setenv(key, val)
+		}
+	}
+	if err := s.Err(); err != nil {
+		return err
+	}
 	return nil
 }
 

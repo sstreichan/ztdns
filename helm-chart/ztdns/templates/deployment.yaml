@@ -11,8 +11,6 @@ spec:
       {{- include "ztdns.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations:
-        checksum.config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | trunc 63 }}
       labels:
         {{- include "ztdns.selectorLabels" . | nindent 8 }}
     spec:
@@ -22,27 +20,36 @@ spec:
     {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      volumes:
-        - name: ztdns-config
-          configMap:
-            name: {{ include "ztdns.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-args:
+          args:
             - "server"
           env:
-            - name: ZTDNS_ZT.API
+            - name: ZTDNS_ZT_API
+              {{- if .Values.secrets.useSecret }}
               valueFrom:
                 secretKeyRef:
                   name: {{ include "ztdns.fullname" . }}
-                  key: ZEROTIER_TOKEN
-          volumeMounts:
-            - name: ztdns-config
-              mountPath: /root/
+                  key: {{ default "ZEROTIER_TOKEN" .Values.secrets.tokenKey }}
+              {{- else }}
+              value: "{{ .Values.zerotier.apiToken }}"
+              {{- end }}
+            - name: ZTDNS_ZT_URL
+              value: "{{ .Values.zerotier.url }}"
+            - name: ZTDNS_SUFFIX
+              value: "{{ .Values.zerotier.suffix }}"
+            - name: ZTDNS_PORT
+              value: "{{ .Values.zerotier.port }}"
+            - name: ZTDNS_INTERFACE
+              value: "{{ .Values.zerotier.interface }}"
+            - name: ZTDNS_DBREFRESH
+              value: "{{ .Values.zerotier.dbRefresh }}"
+            - name: ZTDNS_NETWORKS
+              value: "{{- $pairs := list -}}{{- range .Values.zerotier.networks -}}{{- $pairs = append $pairs (printf "%s=%s" .domain .networkId) -}}{{- end -}}{{- join "," $pairs -}}"
           ports:
             - name: dns
               containerPort: {{ .Values.zerotier.port }}
@@ -79,3 +86,4 @@ args:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+
