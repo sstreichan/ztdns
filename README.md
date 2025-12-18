@@ -57,9 +57,9 @@ If you prefer to run the server with Docker:
 #### Docker Install
 
 1. Clone or download this repo
-1. Create a `.ztdns.toml` file in the main directory by copying the `.ztdns.toml.example` file.
-1. Add your API access token, Network ID, and interface name to the newly created configuration file.
-1. By default it will be bound to port 5356 on the host, that can be changed to standard DNS port 53 by modifying the `docker-compose.yml` file. *You must be running Docker with root permissions in order to bind the privileged port properly.*
+1. Provide configuration via environment variables (prefix ZTDNS_). Required: ZTDNS_ZT_API, ZTDNS_ZT_URL, ZTDNS_NETWORKS (format: domain=networkid,comma separated). Optional: ZTDNS_SUFFIX (default: zt), ZTDNS_PORT (default: 53), ZTDNS_INTERFACE, ZTDNS_DBREFRESH (default: 30).
+1. Add your API access token, Network ID(s), and interface name via environment variables or Docker/Helm deployment.
+1. By default it will be bound to port 5356 on the host; change in `docker-compose.yml` or by setting ZTDNS_PORT. *You must be running Docker with root permissions in order to bind the privileged port properly.*
 1. Run `docker-compose up` to start the server.
 1. Add a DNS entry in your ZeroTier members pointing to the member running ztdns.
 

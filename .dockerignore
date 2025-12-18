@@ -2,7 +2,7 @@ Dockerfile
 .git
 .gitignore
 *.md
-/.ztdns.toml
+
 
 # Binaries for programs and plugins
 /ztdns

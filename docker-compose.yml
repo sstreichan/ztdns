@@ -4,5 +4,12 @@ services:
     build: .
     ports:
      - "5356:53/udp"
-    volumes:
-     - .ztdns.toml:/app/.ztdns.toml
+    environment:
+      - ZTDNS_ZT_API
+      - ZTDNS_ZT_URL
+      - ZTDNS_NETWORKS
+      - ZTDNS_SUFFIX
+      - ZTDNS_PORT
+      - ZTDNS_INTERFACE
+      - ZTDNS_DBREFRESH
+

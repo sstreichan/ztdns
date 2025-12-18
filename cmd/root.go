@@ -6,12 +6,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -37,23 +36,43 @@ func init() {
 	RootCmd.PersistentFlags().Bool("debug", false, "enable debug messages")
 	viper.BindPFlag("debug", RootCmd.PersistentFlags().Lookup("debug"))
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ztdns.toml)")
-
+	// Config is environment-only; no --config flag
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
+	// Configuration is environment-only. Load env-based config and expose to viper for compatibility.
+	viper.SetEnvPrefix("ZTDNS")
+	viper.AutomaticEnv()
+
+	// Load our env conversion helper which validates required vars and sets defaults
+	if err := loadEnvConfig(); err != nil {
+		fmt.Fprintf(os.Stderr, "Config error: %v\n", err)
+		os.Exit(2)
 	}
 
-	viper.SetConfigName(".ztdns") // name of config file (without extension)
-	viper.AddConfigPath(".")      // adding current directory as first search path
-	viper.AddConfigPath("$HOME")  // adding home directory as second search path
+	// Map simple env keys to viper
+	viper.BindEnv("debug", "ZTDNS_DEBUG")
+	viper.BindEnv("interface", "ZTDNS_INTERFACE")
+	viper.BindEnv("port", "ZTDNS_PORT")
+	viper.BindEnv("suffix", "ZTDNS_SUFFIX")
+	viper.BindEnv("DbRefresh", "ZTDNS_DBREFRESH")
+	viper.BindEnv("ZT.API", "ZTDNS_ZT_API")
+	viper.BindEnv("ZT.URL", "ZTDNS_ZT_URL")
 
-	viper.SetEnvPrefix("ztdns")
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	viper.ReadInConfig()
+	// For networks, read environment variables created in loadEnvConfig
+	// and set them into Viper's string map
+	networks := map[string]string{}
+	for _, e := range os.Environ() {
+		// look for ZT_NETWORK_<DOMAIN>=networkid
+		if strings.HasPrefix(e, "ZT_NETWORK_") {
+			parts := strings.SplitN(e, "=", 2)
+			if len(parts) == 2 {
+				domain := strings.TrimPrefix(parts[0], "ZT_NETWORK_")
+				domain = strings.ToLower(strings.ReplaceAll(domain, "_", "-"))
+				networks[domain] = parts[1]
+			}
+		}
+	}
+	viper.Set("Networks", networks)
 }

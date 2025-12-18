@@ -5,24 +5,13 @@ metadata:
   labels:
     {{- include "ztdns.labels" . | nindent 4 }}
 data:
-  .ztdns.toml: |-
-    # Configuration file for ztDNS
-    suffix = "{{ .Values.zerotier.suffix }}"
-    port = {{ .Values.zerotier.port }}
+  # Configuration is provided via environment variables. Set the following in your deployment:
+  # ZTDNS_SUFFIX, ZTDNS_PORT, ZTDNS_INTERFACE, ZTDNS_DBREFRESH, ZTDNS_ZT_URL, ZTDNS_ZT_API, ZTDNS_NETWORKS
+  # Example (in Helm values/templates):
+  # env:
+  # - name: ZTDNS_ZT_API
+  #   value: "{{ .Values.zerotier.api }}"
+  # - name: ZTDNS_ZT_URL
+  #   value: "{{ .Values.zerotier.url }}"
 
-    # Number of minutes to wait before updating the DNS database again (Default: 30)
-    DBRefresh = {{ .Values.zerotier.dbRefresh }}
-
-    # This section contains information related to your ZeroTier config
-    [ZT]
-    # URL is the url of the ZeroTier controller API
-    URL = "{{ .Values.zerotier.url }}"
-
-    # This section contains one or more ZeroTier networks
-    # Format is: domain = "NetworkID"
-    # Domain does not have to match the configured network name
-    [Networks]
-    {{- range .Values.zerotier.networks }}
-    {{ .domain }} = "{{ .networkId }}"
-    {{- end }}
 
