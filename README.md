@@ -18,20 +18,29 @@ If you prefer the traditional installation route:
 
 #### Install
 
-1. First use `go get` to install the latest version, or download a precompiled release from [https://github.com/uxbh/ztdns/releases](https://github.com/uxbh/ztdns/releases)
+1. First use `go get` to install the latest version, or download a precompiled release from [https://github.com/sstreichan/ztdns/releases](https://github.com/sstreichan/ztdns/releases)
     ``` bash
-    go get -u github.com/uxbh/ztdns/
+    go get -u github.com/sstreichan/ztdns/
     go build
     ```
 2. **If you are running on Linux**, run `sudo setcap cap_net_bind_service=+eip ./ztdns` to enable non-root users to bind privileged ports. On other operating systems, the program may need to be run as an administrator.
 
 3. Add a new API access token to your user under the account tab at [https://my.zerotier.com](https://my.zerotier.com/).
-    If you do not want to store your API access token in the configuration file you can also run the
-    server with the `env` command: `env 'ZTDNS_ZT.API=<<APIToken>>' ./ztdns server`
-4. Run `ztdns mkconfig` to generate a sample configuration file.
-5. Add your API access token, Network names and IDs, and interface name to the configuration.
-6. Start the server using `ztdns server`.
-7. Add a DNS entry in your ZeroTier members pointing to the member running ztdns.
+    If you do not want to store your API access token in a system secret, you can provide configuration via environment variables or a .env file in the repository root.
+
+4. Required environment variables (or entries in .env):
+   - ZTDNS_ZT_API — ZeroTier API token (required)
+   - ZTDNS_ZT_URL — ZeroTier API base URL (required)
+   - ZTDNS_NETWORKS — comma-separated domain=networkId pairs (required), e.g. `example=0123456789abcdef,corp=9876543210abcd`
+
+   Optional variables (defaults shown):
+   - ZTDNS_SUFFIX (default: zt)
+   - ZTDNS_PORT (default: 53)
+   - ZTDNS_INTERFACE (no default)
+   - ZTDNS_DBREFRESH (default: 30)
+
+5. Start the server using `ztdns server` (configuration is read from environment variables; actual OS env vars override values in .env).
+6. Add a DNS entry in your ZeroTier members pointing to the member running ztdns.
 
 Once the server is up and running you will be able to resolve names based on the short name and suffix defined in the configuration file (zt by default) from ZeroTier.
 
