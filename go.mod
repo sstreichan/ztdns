@@ -1,4 +1,4 @@
-module github.com/uxbh/ztdns
+module github.com/sstreichan/ztdns
 
 go 1.24.11
 

@@ -3,7 +3,7 @@ FROM golang:1 AS build-env
 # Install ca-certificates for Go module downloads
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /go/src/github.com/uxbh/ztdns
+WORKDIR /go/src/github.com/sstreichan/ztdns
 # Copy go.mod and go.sum first for better caching
 COPY go.mod go.sum ./
 

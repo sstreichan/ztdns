@@ -1,5 +1,6 @@
 // Copyright © 2017 uxbh
-// This file is part of github.com/uxbh/ztdns.
+// Copyright © 2025 sstreichan
+// This file is part of github.com/sstreichan/ztdns.
 
 package cmd
 
