@@ -23,11 +23,11 @@ func loadEnvConfig() error {
 	}
 
 	// Required
-	if os.Getenv("ZTDNS_ZT_API") == "" {
-		return fmt.Errorf("missing required env ZTDNS_ZT_API")
+	if os.Getenv("ZT_API") == "" {
+		return fmt.Errorf("missing required env ZT_API")
 	}
-	if os.Getenv("ZTDNS_ZT_URL") == "" {
-		return fmt.Errorf("missing required env ZTDNS_ZT_URL")
+	if os.Getenv("ZT_URL") == "" {
+		return fmt.Errorf("missing required env ZT_URL")
 	}
 	// Optional with defaults
 	if os.Getenv("ZTDNS_SUFFIX") == "" {

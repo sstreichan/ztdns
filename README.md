@@ -29,8 +29,8 @@ If you prefer the traditional installation route:
     If you do not want to store your API access token in a system secret, you can provide configuration via environment variables or a .env file in the repository root.
 
 4. Required environment variables (or entries in .env):
-   - ZTDNS_ZT_API — ZeroTier API token (required)
-   - ZTDNS_ZT_URL — ZeroTier API base URL (required)
+   - ZT_API — ZeroTier API token (required)
+   - ZT_URL — ZeroTier API base URL (required)
    - ZT_DOMAIN / ZT_NETWORK — required: parallel comma-separated lists. Example: `ZT_DOMAIN=example,corp` and `ZT_NETWORK=0123456789abcdef,9876543210abcd`
 
    Optional variables (defaults shown):
@@ -66,7 +66,7 @@ If you prefer to run the server with Docker:
 #### Docker Install
 
 1. Clone or download this repo
-1. Provide configuration via environment variables (prefix ZTDNS_). Required: ZTDNS_ZT_API, ZTDNS_ZT_URL, and network configuration via `ZT_DOMAIN` and `ZT_NETWORK` (parallel comma-separated lists). Optional: ZTDNS_SUFFIX (default: zt), ZTDNS_PORT (default: 53), ZTDNS_INTERFACE, ZTDNS_DBREFRESH (default: 30).
+1. Provide configuration via environment variables (prefix ZTDNS_). Required: ZT_API, ZT_URL, and network configuration via `ZT_DOMAIN` and `ZT_NETWORK` (parallel comma-separated lists). Optional: ZTDNS_SUFFIX (default: zt), ZTDNS_PORT (default: 53), ZTDNS_INTERFACE, ZTDNS_DBREFRESH (default: 30).
 1. Add your API access token, Network ID(s), and interface name via environment variables or Docker/Helm deployment.
 1. By default it will be bound to port 5356 on the host; change in `docker-compose.yml` or by setting ZTDNS_PORT. *You must be running Docker with root permissions in order to bind the privileged port properly.*
 1. Run `docker-compose up` to start the server.

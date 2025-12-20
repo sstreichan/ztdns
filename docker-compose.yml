@@ -5,8 +5,8 @@ services:
     ports:
      - "5356:53/udp"
     environment:
-      - ZTDNS_ZT_API
-      - ZTDNS_ZT_URL
+      - ZT_API
+      - ZT_URL
       - ZT_DOMAIN
       - ZT_NETWORK
       - ZTDNS_SUFFIX

@@ -46,8 +46,20 @@ var serverCmd = &cobra.Command{
 		// Update the DNSDatabase
 		lastUpdate := updateDNS()
 		req := make(chan string)
+		// Determine interface to listen on. If an interface isn't provided, try to resolve
+		// one based on ZeroTier-assigned IPs using the API.
+		iface := viper.GetString("interface")
+		if iface == "" {
+			resolved, err := ResolveInterfaceFromZT(viper.GetString("ZT.API"), viper.GetString("ZT.URL"), viper.GetStringMapString("Networks"))
+			if err != nil {
+				log.Debugf("Interface resolution error: %v", err)
+			} else if resolved != "" {
+				iface = resolved
+				log.Infof("Resolved interface: %s", iface)
+			}
+		}
 		// Start the DNS server
-		go dnssrv.Start(viper.GetString("interface"), viper.GetInt("port"), viper.GetString("suffix"), req)
+		go dnssrv.Start(iface, viper.GetInt("port"), viper.GetString("suffix"), req)
 
 		refresh := viper.GetInt("DbRefresh")
 		if refresh == 0 {

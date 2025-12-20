@@ -58,8 +58,8 @@ func initConfig() {
 	viper.BindEnv("port", "ZTDNS_PORT")
 	viper.BindEnv("suffix", "ZTDNS_SUFFIX")
 	viper.BindEnv("DbRefresh", "ZTDNS_DBREFRESH")
-	viper.BindEnv("ZT.API", "ZTDNS_ZT_API")
-	viper.BindEnv("ZT.URL", "ZTDNS_ZT_URL")
+	viper.BindEnv("ZT.API", "ZT_API")
+	viper.BindEnv("ZT.URL", "ZT_URL")
 
 	// For networks, read environment variables created in loadEnvConfig
 	// and set them into Viper's string map

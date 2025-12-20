@@ -29,7 +29,7 @@ spec:
           args:
             - "server"
           env:
-            - name: ZTDNS_ZT_API
+            - name: ZT_API
               {{- if .Values.secrets.useSecret }}
               valueFrom:
                 secretKeyRef:
@@ -38,7 +38,7 @@ spec:
               {{- else }}
               value: "{{ .Values.zerotier.apiToken }}"
               {{- end }}
-            - name: ZTDNS_ZT_URL
+            - name: ZT_URL
               value: "{{ .Values.zerotier.url }}"
             - name: ZTDNS_SUFFIX
               value: "{{ .Values.zerotier.suffix }}"
