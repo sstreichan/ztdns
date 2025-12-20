@@ -7,7 +7,8 @@ services:
     environment:
       - ZTDNS_ZT_API
       - ZTDNS_ZT_URL
-      - ZTDNS_NETWORKS
+      - ZT_DOMAIN
+      - ZT_NETWORK
       - ZTDNS_SUFFIX
       - ZTDNS_PORT
       - ZTDNS_INTERFACE

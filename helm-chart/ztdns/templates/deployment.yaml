@@ -48,8 +48,10 @@ spec:
               value: "{{ .Values.zerotier.interface }}"
             - name: ZTDNS_DBREFRESH
               value: "{{ .Values.zerotier.dbRefresh }}"
-            - name: ZTDNS_NETWORKS
-              value: "{{- $pairs := list -}}{{- range .Values.zerotier.networks -}}{{- $pairs = append $pairs (printf "%s=%s" .domain .networkId) -}}{{- end -}}{{- join "," $pairs -}}"
+            - name: ZT_DOMAIN
+              value: "{{- $domains := list -}}{{- range .Values.zerotier.networks -}}{{- $domains = append $domains .domain -}}{{- end -}}{{- join "," $domains -}}"
+            - name: ZT_NETWORK
+              value: "{{- $nids := list -}}{{- range .Values.zerotier.networks -}}{{- $nids = append $nids .networkId -}}{{- end -}}{{- join "," $nids -}}"
           ports:
             - name: dns
               containerPort: {{ .Values.zerotier.port }}

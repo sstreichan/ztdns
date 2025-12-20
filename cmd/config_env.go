@@ -29,10 +29,6 @@ func loadEnvConfig() error {
 	if os.Getenv("ZTDNS_ZT_URL") == "" {
 		return fmt.Errorf("missing required env ZTDNS_ZT_URL")
 	}
-	if os.Getenv("ZTDNS_NETWORKS") == "" {
-		return fmt.Errorf("missing required env ZTDNS_NETWORKS (format: domain=networkid,domain2=networkid2)")
-	}
-
 	// Optional with defaults
 	if os.Getenv("ZTDNS_SUFFIX") == "" {
 		os.Setenv("ZTDNS_SUFFIX", "zt")
@@ -44,25 +40,33 @@ func loadEnvConfig() error {
 		os.Setenv("ZTDNS_DBREFRESH", "30")
 	}
 
-	// Convert NETWORKS into viper-compatible map via environment variables
-	// expected format: domain=networkid,domain2=networkid2
-	networks := os.Getenv("ZTDNS_NETWORKS")
-	pairs := strings.Split(networks, ",")
-	for _, p := range pairs {
-		if p == "" {
-			continue
+	domainsEnv := os.Getenv("ZT_DOMAIN")
+	networksEnv := os.Getenv("ZT_NETWORK")
+	if domainsEnv == "" || networksEnv == "" {
+		return fmt.Errorf("missing required envs: ZT_DOMAIN and ZT_NETWORK must be set")
+	}
+	// split and trim
+	splitAndTrim := func(s string) []string {
+		parts := strings.Split(s, ",")
+		out := []string{}
+		for _, x := range parts {
+			x = strings.TrimSpace(x)
+			if x != "" {
+				out = append(out, x)
+			}
 		}
-		parts := strings.SplitN(p, "=", 2)
-		if len(parts) != 2 {
-			return fmt.Errorf("invalid NETWORKS pair: %s", p)
-		}
-		domain := strings.TrimSpace(parts[0])
-		nid := strings.TrimSpace(parts[1])
-		// expose as ZT_NETWORK_<DOMAIN>=networkid to be accessible
+		return out
+	}
+	domains := splitAndTrim(domainsEnv)
+	networks := splitAndTrim(networksEnv)
+	if len(domains) != len(networks) {
+		return fmt.Errorf("ZT_DOMAIN and ZT_NETWORK must have the same number of comma-separated entries")
+	}
+	for i, domain := range domains {
+		nid := networks[i]
 		key := "ZT_NETWORK_" + strings.ToUpper(strings.ReplaceAll(domain, "-", "_"))
 		os.Setenv(key, nid)
 	}
-
 	return nil
 }
 
